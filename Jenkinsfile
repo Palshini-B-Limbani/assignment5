@@ -20,7 +20,7 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh "docker run -d --name test -p 5000:5000 $IMAGE"
+                sh "docker run -d --name test -p 5002:5000 $IMAGE"
                 sh "sleep 5"
                 sh "curl -f http://localhost:5000"
                 sh "docker rm -f test"
