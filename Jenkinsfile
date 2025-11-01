@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE = "yourdockerhubusername/assignment5"
+        IMAGE = "palshini/assignment5"
     }
 
     stages {
