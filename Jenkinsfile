@@ -20,9 +20,19 @@ pipeline {
 
         stage('Run Tests') {
             steps {
+                // remove old test container if exists
+                sh "docker rm -f test || true"
+
+                // run container (host:5002 -> container:5000)
                 sh "docker run -d --name test -p 5002:5000 $IMAGE"
+
+                // wait for container to boot
                 sh "sleep 5"
-                sh "curl -f http://localhost:5000"
+
+                // test endpoint on host:5002
+                sh "curl -f http://localhost:5002"
+
+                // cleanup container after testing
                 sh "docker rm -f test"
             }
         }
