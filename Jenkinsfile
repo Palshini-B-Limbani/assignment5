@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         IMAGE = "palshini/assignment5"
+        TEST_PORT = "5010"  // new test port
     }
 
     stages {
@@ -22,16 +23,17 @@ pipeline {
             steps {
                 sh "docker rm -f test || true"
 
+                // start container on bridge network
                 sh """
                 docker run -d --name test \
-                -e DB_HOST=localhost \
-                -p 5002:5000 \
+                -p ${TEST_PORT}:5000 \
                 $IMAGE python app.py --host=0.0.0.0 --port=5000
                 """
 
-                sh "sleep 10"
+                sh "sleep 12"
 
-                sh "curl -f http://127.0.0.1:5002/ || (docker logs test && exit 1)"
+                // test via mapped port
+                sh "curl -f http://172.17.0.1:${TEST_PORT}/ || (docker logs test && exit 1)"
 
                 sh "docker rm -f test"
             }
