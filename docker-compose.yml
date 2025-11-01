@@ -1,0 +1,22 @@
+services:
+  web:
+    image: python:3.12
+    working_dir: /app
+    volumes:
+      - ./app:/app
+    command: sh -c "pip install flask mysql-connector-python && python app.py"
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: testdb
+    volumes:
+      - dbdata:/var/lib/mysql
+
+volumes:
+  dbdata:
