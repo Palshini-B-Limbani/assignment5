@@ -23,16 +23,20 @@ pipeline {
                 // remove old test container if exists
                 sh "docker rm -f test || true"
 
-                // run container (host:5002 -> container:5000)
-                sh "docker run -d --name test -p 5002:5000 $IMAGE"
+                // run container WITHOUT using external DB
+                sh """
+                docker run -d --name test \
+                -e DB_HOST=localhost \
+                -p 5002:5000 $IMAGE
+                """
 
-                // wait for container to boot
-                sh "sleep 5"
+                // wait for Flask to boot
+                sh "sleep 8"
 
-                // test endpoint on host:5002
-                sh "curl -f http://localhost:5002"
+                // call Flask endpoint
+                sh "curl -f http://127.0.0.1:5002/ || (docker logs test && exit 1)"
 
-                // cleanup container after testing
+                // cleanup container
                 sh "docker rm -f test"
             }
         }
